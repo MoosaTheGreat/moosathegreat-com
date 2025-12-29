@@ -1,0 +1,74 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+  SUPER_ADMIN
+}
+
+model User {
+  id             String   @id @default(uuid())
+  email          String   @unique
+  password       String
+  role           Role     @default(USER)
+  is2FAEnabled   Boolean  @default(false)
+  twoFactorSecret String?
+  phone          String?
+  createdAt      DateTime @default(now())
+}
+
+model SystemSetting {
+  key   String @id
+  value String // JSON string
+}
+
+model Plugin {
+  id          String  @id @default(uuid())
+  name        String  @unique
+  enabled     Boolean @default(true)
+  config      Json    // The DSL definition
+  version     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Command {
+  id          String @id @default(uuid())
+  trigger     String @unique
+  description String
+  syntax      String
+  logicFlow   Json   // Visual coding logic blocks
+  permission  Role   @default(ADMIN)
+}
+
+model Page {
+  id        String   @id @default(uuid())
+  slug      String   @unique
+  title     String
+  content   Json     // Dynamic UI blocks
+  published Boolean  @default(false)
+  roles     Role[]
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  action    String
+  userId    String?
+  details   Json?
+  timestamp DateTime @default(now())
+}
+
+model UpdateLog {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  type        String   // FEATURE, PLUGIN, PAGE
+  timestamp   DateTime @default(now())
+}
