@@ -7,21 +7,19 @@ export class AiService {
   private openai: OpenAI;
 
   constructor(private configService: ConfigService) {
-    this.openai = new OpenAI({
-      apiKey: this.configService.get<string>('OPENAI_API_KEY'),
-    });
+    const apiKey = this.configService.get<string>('OPENAI_API_KEY');
+    if (!apiKey) {
+      throw new Error('OPENAI_API_KEY is not configured');
+    }
+    this.openai = new OpenAI({ apiKey });
   }
 
   async generateText(prompt: string): Promise<string> {
-    try {
-      const response = await this.openai.chat.completions.create({
-        model: 'gpt-4',
-        messages: [{ role: 'user', content: prompt }],
-      });
-      return response.choices[0].message.content || '';
-    } catch (e) {
-      console.error('AI Error', e);
-      return 'AI System Unavailable';
-    }
+    const response = await this.openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages: [{ role: 'user', content: prompt }],
+      max_tokens: 150,
+    });
+    return response.choices[0]?.message?.content || 'No response';
   }
 }

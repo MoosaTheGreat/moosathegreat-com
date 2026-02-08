@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Futuristic Homepage</title>
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            color: #ffffff;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Glassmorphism Utility */
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+        }
+
+        /* Neon Glow */
+        .neon-glow {
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5), 0 0 40px rgba(0, 255, 255, 0.3);
+        }
+
+        /* Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes progress {
+            from { width: 0%; }
+            to { width: 100%; }
+        }
+
+        /* Sections */
+        section {
+            display: none;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        section.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        /* Redirect Selection Page */
+        #redirect-selection {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            text-align: center;
+        }
+        .redirect-container {
+            display: flex;
+            gap: 50px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .redirect-box {
+            width: 300px;
+            height: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: float 3s ease-in-out infinite;
+            position: relative;
+        }
+        .redirect-box:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.8);
+        }
+        .redirect-box img {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+        }
+        .redirect-box h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .redirect-box p {
+            font-size: 16px;
+            opacity: 0.8;
+        }
+
+        /* Loading Screen */
+        #loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #ff006e, #8338ec, #3a86ff, #06ffa5);
+            background-size: 400% 400%;
+            animation: gradientShift 3s ease infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            z-index: 1000;
+        }
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-top: 5px solid #ffffff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .progress-bar {
+            width: 300px;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #ffffff;
+            animation: progress 5s linear forwards;
+        }
+        .loading-text {
+            font-size: 18px;
+            text-align: center;
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 2px solid #ffffff;
+            animation: typing 2s steps(40, end), blink-caret 0.75s step-end infinite;
+        }
+        @keyframes blink-caret {
+            from, to { border-color: transparent; }
+            50% { border-color: #ffffff; }
+        }
+
+        /* Home Page */
+        #home {
+            padding: 0;
+        }
+        .nav-bar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            z-index: 100;
+        }
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            background: linear-gradient(45deg, #ff006e, #8338ec);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+        .nav-links a {
+            text-decoration: none;
+            color: #ffffff;
+            font-size: 18px;
+            transition: color 0.3s ease;
+        }
+        .nav-links a:hover {
+            color: #00ffff;
+        }
+        .profile {
+            position: relative;
+            cursor: pointer;
+        }
+        .profile-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        .dropdown {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 10px;
+            display: none;
+            min-width: 150px;
+        }
+        .dropdown.show {
+            display: block;
+        }
+        .dropdown a {
+            display: block;
+            padding: 10px;
+            text-decoration: none;
+            color: #ffffff;
+            transition: background 0.3s ease;
+        }
+        .dropdown a:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        .home-content {
+            padding-top: 100px;
+            text-align: center;
+        }
+        .home-content h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #00ffff, #ff006e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .home-content p {
+            font-size: 20px;
+            opacity: 0.8;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .redirect-container {
+                flex-direction: column;
+                gap: 30px;
+            }
+            .nav-bar {
+                padding: 20px 20px;
+            }
+            .nav-links {
+                gap: 20px;
+            }
+            .home-content h1 {
+                font-size: 36px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Redirect Selection Page -->
+    <section id="redirect-selection" class="active">
+        <h1 style="font-size: 36px; margin-bottom: 50px; background: linear-gradient(45deg, #00ffff, #ff006e); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Welcome to the Future</h1>
+        <div class="redirect-container">
+            <div class="redirect-box glass neon-glow" onclick="handleRedirect('home')">
+                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSIjZmZmZmZmIi8+Cjwvc3ZnPg==" alt="Website Icon">
+                <h2>ENTER WEBSITE</h2>
+                <p>Redirect to homepage</p>
+            </div>
+            <div class="redirect-box glass neon-glow" onclick="handleRedirect('admin')">
+                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSIjZmZmZmZmIi8+Cjwvc3ZnPg==" alt="Admin Icon">
+                <h2>ADMIN PANEL</h2>
+                <p>Secure admin access</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Loading Screen -->
+    <section id="loading">
+        <div class="spinner"></div>
+        <div class="progress-bar">
+            <div class="progress-fill"></div>
+        </div>
+        <div class="loading-text" id="loading-text">YOUR BEING REDIRECTED TO HOME</div>
+    </section>
+
+    <!-- Home Page -->
+    <section id="home">
+        <nav class="nav-bar glass">
+            <div class="logo">FUTURE CORP</div>
+            <div class="nav-links">
+                <a href="#home">HOME</a>
+                <a href="#blogs">BLOGS</a>
+                <a href="#contact">CONTACT</a>
+            </div>
+            <div class="profile" onclick="toggleDropdown()">
+                <div class="profile-icon">👤</div>
+                <div class="dropdown" id="dropdown">
+                    <a href="#" onclick="showProfile()">Profile</a>
+                    <a href="#" id="login-logout" onclick="handleLoginLogout()">Login</a>
+                </div>
+            </div>
+        </nav>
+        <div class="home-content">
+            <h1>Welcome to the Future</h1>
+            <p>Experience the ultimate futuristic interface.</p>
+        </div>
+    </section>
+
+    <script>
+        // LocalStorage keys
+        const IS_LOGGED_IN = 'isLoggedIn';
+        const ROLE = 'role';
+
+        // Loading messages
+        const loadingMessages = [
+            'YOUR BEING REDIRECTED TO HOME',
+            'PLEASE BE PATIENT AS WE REDIRECT YOU',
+            'CHECKING FOR SECURITY',
+            'CHECKING YOUR INTERNET STABILITY'
+        ];
+
+        // On page load
+        window.onload = function() {
+            const isLoggedIn = localStorage.getItem(IS_LOGGED_IN) === 'true';
+            const role = localStorage.getItem(ROLE);
+
+            if (role === 'admin') {
+                window.location.href = 'admin.html';
+            } else {
+                showSection('redirect-selection');
+                updateLoginLogout();
+            }
+        };
+
+        // Show section
+        function showSection(sectionId) {
+            document.querySelectorAll('section').forEach(sec => sec.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+        }
+
+        // Handle redirect
+        function handleRedirect(type) {
+            showSection('loading');
+            let messageIndex = 0;
+            const textElement = document.getElementById('loading-text');
+
+            const interval = setInterval(() => {
+                if (messageIndex < loadingMessages.length) {
+                    textElement.textContent = loadingMessages[messageIndex];
+                    messageIndex++;
+                } else {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        if (type === 'admin') {
+                            const role = localStorage.getItem(ROLE);
+                            if (role === 'admin') {
+                                window.location.href = 'admin.html';
+                            } else {
+                                showSection('home');
+                            }
+                        } else {
+                            showSection('home');
+                        }
+                    }, 1000);
+                }
+            }, 1000);
+        }
+
+        // Toggle dropdown
+        function toggleDropdown() {
+            document.getElementById('dropdown').classList.toggle('show');
+        }
+
+        // Update login/logout link
+        function updateLoginLogout() {
+            const isLoggedIn = localStorage.getItem(IS_LOGGED_IN) === 'true';
+            const link = document.getElementById('login-logout');
+            link.textContent = isLoggedIn ? 'Logout' : 'Login';
+        }
+
+        // Handle login/logout
+        function handleLoginLogout() {
+            const isLoggedIn = localStorage.getItem(IS_LOGGED_IN) === 'true';
+            if (isLoggedIn) {
+                localStorage.removeItem(IS_LOGGED_IN);
+                localStorage.removeItem(ROLE);
+                updateLoginLogout();
+                alert('Logged out successfully.');
+                location.reload();
+            } else {
+                const username = prompt('Username:');
+                const password = prompt('Password:');
+                if (username === 'admin' && password === 'admin') {
+                    localStorage.setItem(IS_LOGGED_IN, 'true');
+                    localStorage.setItem(ROLE, 'admin');
+                    alert('Logged in as admin.');
+                    updateLoginLogout();
+                } else if (username && password) {
+                    localStorage.setItem(IS_LOGGED_IN, 'true');
+                    localStorage.setItem(ROLE, 'user');
+                    alert('Logged in as user.');
+                    updateLoginLogout();
+                } else {
+                    alert('Invalid credentials.');
+                }
+            }
+        }
+
+        // Show profile (placeholder)
+        function showProfile() {
+            alert('Profile page coming soon!');
+        }
+    </script>
+</body>
+</html>

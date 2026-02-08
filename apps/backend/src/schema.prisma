@@ -1,0 +1,83 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  password     String
+  phone        String?
+  role         Role     @default(USER)
+  is2FAEnabled Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Page {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  title     String
+  content   Json
+  published Boolean  @default(false)
+  roles     Role[]   @default([])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Setting {
+  key       String   @id
+  value     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Command {
+  id          String   @id @default(cuid())
+  trigger     String   @unique
+  description String
+  syntax      String
+  logicFlow   Json // Stores the visual coding logic flow
+  permission  Role     @default(ADMIN)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Plugin {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String
+  config      Json // Stores plugin configuration (hooks, events, UI blocks)
+  enabled     Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model UpdateLog {
+  id        String   @id @default(cuid())
+  type      String // e.g., 'PLUGIN', 'PAGE', 'COMMAND', 'SYSTEM'
+  title     String
+  details   String?
+  createdAt DateTime @default(now())
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String
+  action    String // e.g., 'USER_LOGIN', 'PAGE_UPDATE'
+  details   Json?
+  ipAddress String?
+  createdAt DateTime @default(now())
+}
+
+enum Role {
+  USER
+  ADMIN
+}

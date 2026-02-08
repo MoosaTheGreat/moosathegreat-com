@@ -1,24 +1,25 @@
-import { Controller, Post, Body, UseGuards, Request } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Request, Get } from '@nestjs/common';
 import { CommandService } from './command.service';
 import { PrismaService } from '../prisma/prisma.service';
-// Assuming an AuthGuard exists or will be implemented
-// import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { JwtAuthGuard } from './jwt-auth.guard';
+import { RolesGuard } from './roles.guard';
+import { Roles } from './roles.decorator';
+import { Role } from '@prisma/client';
 
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(Role.ADMIN)
 @Controller('command')
 export class CommandController {
   constructor(private commandService: CommandService, private prisma: PrismaService) {}
 
   @Post('execute')
-  // @UseGuards(JwtAuthGuard)
   async execute(@Body() body: { cmd: string }, @Request() req) {
-    // Mock userId for now if auth not fully wired in this context
-    const userId = req.user?.id || 'admin-id';
+    const userId = req.user.id;
     const result = await this.commandService.execute(body.cmd, userId);
     return { output: result };
   }
 
   @Post('create')
-  // @UseGuards(JwtAuthGuard)
   async createCommand(@Body() body: { trigger: string; description: string; flow: any }) {
     return this.prisma.command.create({
       data: {
@@ -29,5 +30,10 @@ export class CommandController {
         permission: 'ADMIN',
       },
     });
+  }
+
+  @Get('list')
+  async listCommands() {
+    return this.prisma.command.findMany();
   }
 }
